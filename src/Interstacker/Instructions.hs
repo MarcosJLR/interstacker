@@ -60,18 +60,18 @@ valueFromString str = IntVal <$> readMaybe str
 instrFromString :: String -> Maybe Instruction
 instrFromString str = case words str of
     ["POP"]          -> Just Pop
-    ["ADD"]          -> Just Pop
-    ["Sub"]          -> Just Pop
-    ["MUL"]          -> Just Pop
-    ["DIV"]          -> Just Pop
-    ["MOD"]          -> Just Pop
-    ["AND"]          -> Just Pop
-    ["OR"]           -> Just Pop
-    ["LT"]           -> Just Pop
-    ["GT"]           -> Just Pop
-    ["LEQ"]          -> Just Pop
-    ["GEQ"]          -> Just Pop
-    ["EQ"]           -> Just Pop
+    ["ADD"]          -> Just Add
+    ["Sub"]          -> Just Sub
+    ["MUL"]          -> Just Mul
+    ["DIV"]          -> Just Div
+    ["MOD"]          -> Just Mod
+    ["AND"]          -> Just And
+    ["OR"]           -> Just Or
+    ["LT"]           -> Just Lt
+    ["GT"]           -> Just Gt
+    ["LEQ"]          -> Just Leq
+    ["GEQ"]          -> Just Geq
+    ["EQ"]           -> Just Eq
     ["NEQ"]          -> Just Neq
     ["UMINUS"]       -> Just Uminus
     ["NOT"]          -> Just Not
@@ -82,9 +82,9 @@ instrFromString str = case words str of
     ["LVALUE" , id]  -> Just $ Lvalue id
     ["READ"   , id]  -> Just $ Read id
     ["PRINT"  , id]  -> Just $ Print id
-    ["GOTO"   , id]  -> Just $ Rvalue id
-    ["GOTRUE" , id]  -> Just $ Lvalue id
-    ["GOFALSE", id]  -> Just $ Lvalue id
+    ["GOTO"   , id]  -> Just $ Goto id
+    ["GOTRUE" , id]  -> Just $ GoTrue id
+    ["GOFALSE", id]  -> Just $ GoFalse id
     _                -> Nothing
 
 breakInstrLabel :: String -> (Maybe Instruction, Label)
