@@ -1,4 +1,9 @@
-module Interstacker.ProgramState () where
+module Interstacker.ProgramState
+    ( PState(..)
+    , PMonad(..)
+    , evalInstruction
+    , initState
+    ) where
 
 import Interstacker.Instructions
     ( Id
@@ -32,9 +37,22 @@ data PState = PState
     , addressSpace :: Map Id Element
     , labelMapping :: Map Label Int
     , programCount :: Int
-    }
+    } deriving(Show, Eq)
 
 type PMonad = RWST () [String] PState IO
+
+initState :: [Label] -> PState
+initState ls = PState
+    { stack        = []
+    , addressSpace = Map.empty
+    , labelMapping = Map.fromList $ labesIndex 0 ls
+    , programCount = 0
+    }
+
+labesIndex :: Int -> [Label] -> [(Label, Int)]
+labesIndex _ [] = []
+labesIndex idx ("":rest) = labesIndex (idx+1) rest
+labesIndex idx (label:rest) = (label, idx) : labesIndex (idx+1) rest
 
 evalInstruction :: Instruction ->  PMonad ()
 evalInstruction (Push val) = do
@@ -153,7 +171,7 @@ evalInstruction Assign = do
     case stack st of
         (Address id : val@(Value _) : rest) -> do
             let newMap = Map.insert id val (addressSpace st)
-            put $ st { addressSpace = newMap }
+            put $ st { addressSpace = newMap , stack = rest }
         _ -> liftIO $ putStrLn "ASSIGN operation on invalid stack!"
 evalInstruction (Rvalue id) = do
     st <- get
@@ -184,7 +202,6 @@ evalInstruction (GoFalse label) = do
         _ -> liftIO $ putStrLn "GOFALSE operation on non-existing label!"
 evalInstruction (Read id) = do
     st <- get
-    liftIO $ putStr "$ > "
     input <- liftIO getLine
     case Ins.valueFromString input of
         Just val -> do
