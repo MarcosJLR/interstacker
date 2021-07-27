@@ -20,7 +20,7 @@ type Label = String
 data Value
     = BoolVal Bool
     | IntVal Int
-    deriving (Eq, Show)
+    deriving (Eq)
 
 data Instruction
     = Push Value
@@ -93,3 +93,7 @@ breakInstrLabel = bimap instrFromString removeColon . break'
     removeColon "" = ""
     removeColon label = init label
     break' = bimap reverse reverse . break (== ':') . reverse
+
+instance Show Value where
+    show (IntVal val) = show val
+    show (BoolVal val) = show val

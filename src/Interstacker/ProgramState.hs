@@ -30,7 +30,7 @@ import qualified Interstacker.Instructions as Ins
 data Element
     = Value Value
     | Address Id
-    deriving (Eq, Show)
+    deriving (Eq)
 
 data PState = PState
     { stack        :: [Element]
@@ -215,3 +215,6 @@ evalInstruction (Print id) = do
         _ -> liftIO $ putStrLn "PRINT operation on unassigned address!"
 evalInstruction Exit = liftIO exitSuccess
 
+instance Show Element where
+    show (Value val) = show val
+    show (Address id) = "Pointer to " ++ id
