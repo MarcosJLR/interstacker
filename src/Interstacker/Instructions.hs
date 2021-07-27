@@ -1,7 +1,16 @@
-module Interstacker.Instructions () where
+module Interstacker.Instructions
+    ( Id
+    , Label
+    , Value(..)
+    , Instruction(..)
+    , breakInstrLabel
+    , valueFromString
+    , instrFromString
+    ) where
 
-import Data.Tuple   (swap)
-import Text.Read    (readMaybe)
+import Data.Bifunctor   (bimap)
+import Data.Tuple       (swap)
+import Text.Read        (readMaybe)
 
 
 type Id = String
@@ -77,3 +86,10 @@ instrFromString str = case words str of
     ["GOTRUE" , id]  -> Just $ Lvalue id
     ["GOFALSE", id]  -> Just $ Lvalue id
     _                -> Nothing
+
+breakInstrLabel :: String -> (Maybe Instruction, Label)
+breakInstrLabel = bimap instrFromString removeColon . break'
+  where
+    removeColon "" = ""
+    removeColon label = init label
+    break' = bimap reverse reverse . break (== ':') . reverse

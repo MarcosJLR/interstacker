@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Interstacker.Instructions
+      Interstacker.ProgramState
       Lib
   other-modules:
       Paths_interstacker
@@ -33,6 +34,8 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers
+    , mtl
   default-language: Haskell2010
 
 executable interstacker-exe
@@ -44,7 +47,9 @@ executable interstacker-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers
     , interstacker
+    , mtl
   default-language: Haskell2010
 
 test-suite interstacker-test
@@ -57,5 +62,7 @@ test-suite interstacker-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers
     , interstacker
+    , mtl
   default-language: Haskell2010
