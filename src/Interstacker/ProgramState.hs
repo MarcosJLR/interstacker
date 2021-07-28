@@ -190,14 +190,18 @@ evalInstruction (GoTrue label) = do
     st <- get
     case Map.lookup label (labelMapping st) of
         Just idx -> case stack st of
-            ( Value (BoolVal val) : _ ) -> when val $ put $ st { programCount = idx }
+            ( Value (BoolVal val) : rest ) -> do
+                let pc = if val then idx else programCount st
+                put $ st { stack = rest, programCount = pc }
             _ -> liftIO $ putStrLn "GOTRUE operation on invalid stack!"
         _ -> liftIO $ putStrLn "GOTRUE operation on non-existing label!"
 evalInstruction (GoFalse label) = do
     st <- get
     case Map.lookup label (labelMapping st) of
         Just idx -> case stack st of
-            ( Value (BoolVal val) : _ ) -> unless val $ put $ st { programCount = idx }
+            ( Value (BoolVal val) : rest ) -> do
+                let pc = if not val then idx else programCount st
+                put $ st { stack = rest, programCount = pc }
             _ -> liftIO $ putStrLn "GOFALSE operation on invalid stack!"
         _ -> liftIO $ putStrLn "GOFALSE operation on non-existing label!"
 evalInstruction (Read id) = do
